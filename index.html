@@ -1,0 +1,116 @@
+color swatches
+
+ {% elsif block.settings.picker_type == 'swatches' %}
+                <variant-radios class="no-js-hidden product_radio" data-section="{{ section.id }}" data-url="{{ product.url }}" {{ block.shopify_attributes }}>
+                  {%- for option in product.options_with_values -%}
+                      <fieldset class="js product-form__input">
+                        <legend class="form__label">{{ option.name }}</legend>
+                   {% if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour' %} <div class="product_swatches_color">{% endif %}
+                        {%- for value in option.values -%}
+                          {% if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour' %}<div class="product_swatch_color__main">{% endif %}
+                          <input type="radio" id="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}"
+                                name="{{ option.name }}"
+                                value="{{ value | escape }}"
+                                form="{{ product_form_id }}"
+                                {% if option.selected_value == value %}checked{% endif %}
+                          >
+
+                          {% assign swatchImg = '' %}  
+                          {% for variant in product.variants %} 
+                            {% if product.options[0] == 'Color' or product.options[0] == 'color' or product.options[0] == 'Colour' or product.options[0] == 'colour'%}
+                                {% assign colorVal = variant.option1 %}  
+                                {% if colorVal == value %}
+                                  {% assign swatchImg = variant.image %} 
+                               {% endif %} 
+                             {% endif %}
+                            {% if product.options[1] == 'Color' or product.options[1] == 'color' or product.options[1] == 'Colour' or product.options[1] == 'colour' %}
+                                {% assign colorVal = variant.option1 %}  
+                                {% if colorVal == value %}
+                                  {% assign swatchImg = variant.image %} 
+                               {% endif %} 
+                             {% endif %}
+                          {% endfor %}
+                    
+                          <label for="{{ section.id }}-{{ option.position }}-{{ forloop.index0 }}" >
+                            {% if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour' %}  
+                            {% if swatchImg != blank %}	
+                              <img src="{{ swatchImg  | img_url: 'small' }}" alt="{{ swatchImg.alt }}" data-id="{{ swatchImg.id }}"/>
+                              <span>{{ value | escape }}</span>
+                            {% endif %}
+                            {% unless swatchImg != blank %}
+                              <div class="label_title">
+                                <span>{{ value | escape }}</span>
+                              </div>
+                            {% endunless %}
+                            {% else %}
+                            {{ value | escape }}
+                            {% endif %}
+                          </label>
+                          {% if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour' %}</div>{% endif %}
+                        {%- endfor -%}{% if option.name == 'Color' or option.name == 'color' or option.name == 'Colour' or option.name == 'colour'%}</div>{% endif %}
+                      </fieldset>
+                  {%- endfor -%}
+                  <script type="application/json">
+                    {{ product.variants | json }}
+                  </script>
+                </variant-radios>
+
+
+
+    {
+      "type": "variant_picker",
+      "name": "t:sections.main-product.blocks.variant_picker.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "select",
+          "id": "picker_type",
+          "options": [
+            {
+              "value": "dropdown",
+              "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.options__1.label"
+            },
+            {
+              "value": "button",
+              "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.options__2.label"
+            },
+            {
+              "value": "swatches",
+              "label": "swatches"
+            }
+          ],
+          "default": "button",
+          "label": "t:sections.main-product.blocks.variant_picker.settings.picker_type.label"
+        }
+      ]
+    },
+
+
+jq
+
+     // select variant change img
+  
+  $(".product_swatches_color .product_swatch_color__main").click(function(){
+    $('.invt_icon').hide();
+  var image_merge = $(this).find('img').attr('data-id');
+       alert(image_merge);
+      $('.cust-product-img2 img').each(function(){
+        var thumb_img_id =  $(this).attr('data-img');
+         console.log(thumb_img_id);
+        if(image_merge == thumb_img_id){
+          $(this).trigger('click');
+        }
+      });
+  });
+
+  var slct = $('.product_radio input[type=radio]:checked+label img ').attr('data-id');
+   // alert(slct);
+    if (slct) {
+        $('.cust-product-img2 img').each(function(){
+        var slct_img =  $(this).attr('data-img');
+         // console.log(thumb_img_id);
+        if(slct == slct_img){
+          $(this).trigger('click');
+        }
+      });
+  };
